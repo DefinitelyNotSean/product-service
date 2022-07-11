@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,10 +38,13 @@ public class ProductController {
 	@Autowired
 	private FirestoreDAO firestoreDAO;
 	
+	@Value("${SERVICE_ACCOUNT}")
+	private String firebaseCredentials;
+	
 	@ApiOperation(value = "Find a single product by sku.", notes = "Find a single product by sku.")
 	@GetMapping("/find/product/{sku}")
 	public Product findProductBySKU(@PathVariable @ApiParam(name = "sku", value = "The SKU is the id of the product", example = "12345") String sku) throws InterruptedException, ExecutionException {
-		logger.info("/find/product/{sku}");
+		logger.info("service account is: " + firebaseCredentials);
 		return firestoreDAO.getProductsBySKU(sku);
 	}
 	
