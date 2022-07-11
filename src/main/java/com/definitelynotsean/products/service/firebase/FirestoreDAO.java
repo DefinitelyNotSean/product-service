@@ -33,6 +33,9 @@ public class FirestoreDAO {
 	@Value("${SERVICE_ACCOUNT}")
 	private String firebaseCredentials;
 	
+	@Value("${local}")
+	private boolean isLocal;
+	
 	public List<Product> getProductsByFieldAndValue(String field, String value, String operation) {
 		Firestore dbFirestore = getFirestore();
 		
@@ -119,16 +122,20 @@ public class FirestoreDAO {
 		Firestore dbFirestore = null;
 		
 		try {
-//			FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
-//			FirebaseOptions options = new FirebaseOptions.Builder()
-//			  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-//			  .build();
-			
             if (FirebaseApp.getApps().isEmpty()) { //<--- check with this line
-				InputStream credentialsStream = new ByteArrayInputStream(firebaseCredentials.getBytes());
-				FirebaseOptions options = FirebaseOptions.builder()
-						.setCredentials(GoogleCredentials.fromStream(credentialsStream)).build();
-				
+            	FirebaseOptions options = null;
+            	
+    			if (isLocal) {
+    				FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
+    				options = new FirebaseOptions.Builder()
+    				  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+    				  .build();
+    			} else {
+    				InputStream credentialsStream = new ByteArrayInputStream(firebaseCredentials.getBytes());
+    				options = FirebaseOptions.builder()
+    						.setCredentials(GoogleCredentials.fromStream(credentialsStream)).build();
+    			}
+
                 FirebaseApp.initializeApp(options);
             }
             
@@ -140,5 +147,4 @@ public class FirestoreDAO {
 	
 		return dbFirestore;
 	}
-	
 }
