@@ -18,6 +18,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.WriteResult;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
@@ -66,7 +67,22 @@ public class FirestoreDAO {
 		return documentReference;
 	}
 	
-	public Product getProductsBySKU(String sku) {
+	public String deleteProductBySKU(String sku) throws InterruptedException, ExecutionException {
+		Firestore dbFirestore = getFirestore();
+		String response = null;
+		
+		try {
+			DocumentReference documentReference = dbFirestore.collection("products").document(sku);
+			ApiFuture<WriteResult> future = documentReference.delete();
+			response = future.get().getUpdateTime().toString();
+		} catch (Exception e) {
+			logger.error("aw shit: ", e);
+		}
+			
+		return response;
+	}
+	
+	public Product getProductBySKU(String sku) {
 		Firestore dbFirestore = getFirestore();
 		DocumentSnapshot document = null;
 		
