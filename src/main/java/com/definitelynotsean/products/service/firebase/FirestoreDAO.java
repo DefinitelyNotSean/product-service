@@ -1,6 +1,7 @@
 package com.definitelynotsean.products.service.firebase;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -103,6 +104,15 @@ public class FirestoreDAO {
 		}
 		
 		return product;
+	}
+	
+	public String saveProduct(Product product) throws InterruptedException, ExecutionException {
+		logger.info("/save/product");
+		
+		Firestore dbFirestore = getFirestore();
+		ApiFuture<WriteResult> collectionApiFuture = dbFirestore.collection("products").document(product.getSku()).set(product);
+		
+		return collectionApiFuture.get().getUpdateTime().toString();
 	}
 	
 	private Firestore getFirestore() {
