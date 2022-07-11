@@ -27,18 +27,17 @@ public class FirebaseUtil {
 		Firestore dbFirestore = null;
 
 		try {
-			FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
-			FirebaseOptions options = new FirebaseOptions.Builder()
-			  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-			  .build();
-			logger.info(" the creds" + firebaseCredentials);
-
-			
-//			InputStream credentialsStream = new ByteArrayInputStream(firebaseCredentials.getBytes());
-//			FirebaseOptions options = FirebaseOptions.builder()
-//					.setCredentials(GoogleCredentials.fromStream(credentialsStream)).build();
+//			FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
+//			FirebaseOptions options = new FirebaseOptions.Builder()
+//			  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+//			  .build();
+			logger.info("the creds" + firebaseCredentials);
 
 			if (FirebaseApp.getApps().isEmpty()) { // <--- check with this line
+				InputStream credentialsStream = new ByteArrayInputStream(firebaseCredentials.getBytes());
+				FirebaseOptions options = FirebaseOptions.builder()
+						.setCredentials(GoogleCredentials.fromStream(credentialsStream)).build();
+				
 				FirebaseApp.initializeApp(options);
 			}
 
