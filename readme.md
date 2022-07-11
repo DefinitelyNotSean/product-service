@@ -14,6 +14,7 @@ https://www.baeldung.com/spring-bean-annotations
 change package and project names
 Add more docs to api spec
 Add deleete endpoint
+
 Add authentication!
 
 
