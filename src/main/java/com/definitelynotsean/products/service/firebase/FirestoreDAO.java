@@ -1,13 +1,14 @@
 package com.definitelynotsean.products.service.firebase;
 
-import java.io.FileInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.definitelynotsean.products.service.Product;
@@ -28,6 +29,8 @@ public class FirestoreDAO {
 	
 	private static final Logger logger = LoggerFactory.getLogger(FirestoreDAO.class);
 	
+	@Value("${SERVICE_ACCOUNT}")
+	private String firebaseCredentials;
 	
 	public List<Product> getProductsByFieldAndValue(String field, String value, String operation) {
 		Firestore dbFirestore = getFirestore();
@@ -106,12 +109,16 @@ public class FirestoreDAO {
 		Firestore dbFirestore = null;
 		
 		try {
-			FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
-			FirebaseOptions options = new FirebaseOptions.Builder()
-			  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
-			  .build();
+//			FileInputStream serviceAccount = new FileInputStream("./serviceAccountKey.json");
+//			FirebaseOptions options = new FirebaseOptions.Builder()
+//			  .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+//			  .build();
 			
-            if( FirebaseApp.getApps().isEmpty()) { //<--- check with this line
+            if (FirebaseApp.getApps().isEmpty()) { //<--- check with this line
+				InputStream credentialsStream = new ByteArrayInputStream(firebaseCredentials.getBytes());
+				FirebaseOptions options = FirebaseOptions.builder()
+						.setCredentials(GoogleCredentials.fromStream(credentialsStream)).build();
+				
                 FirebaseApp.initializeApp(options);
             }
             
